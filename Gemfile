@@ -1,5 +1,6 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "berkshelf", "~> 3.0.0.beta6"
-gem "test-kitchen", "~> 1.2"
-gem "kitchen-vagrant"
+# gem "berkshelf", "~> 3.0.0.beta6"
+gem 'librarian-chef'
+gem 'test-kitchen', '~> 1.2'
+gem 'kitchen-vagrant'

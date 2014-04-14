@@ -1,0 +1,15 @@
+SITE
+  remote: http://community.opscode.com/api/v1
+  specs:
+    chef_handler (1.1.6)
+
+PATH
+  remote: ./
+  specs:
+    slack_handler (0.0.1)
+      chef_handler (>= 0.0.0)
+
+DEPENDENCIES
+  chef_handler (>= 0)
+  slack_handler (>= 0)
+
