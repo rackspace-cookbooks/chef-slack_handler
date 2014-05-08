@@ -28,13 +28,15 @@ end
 require "timeout"
 
 class Chef::Handler::Slack < Chef::Handler
-  attr_reader :team, :api_key, :config, :timeout
+  attr_reader :team, :api_key, :config, :timeout, :fail_only, :detail_level
 
   def initialize(config = {})
     @config  = config.dup
     @team    = @config.delete(:team)
     @api_key = @config.delete(:api_key)
     @timeout = @config.delete(:timeout) || 15
+    @fail_only = @config.delete(:fail_only) || false
+    @detail_level = @config.delete(:detail_level) || 'basic'
     @config.delete(:icon_emoji) if @config[:icon_url] && @config[:icon_emoji]
   end
 
@@ -42,7 +44,13 @@ class Chef::Handler::Slack < Chef::Handler
     begin
       Timeout::timeout(@timeout) do
         Chef::Log.debug("Sending report to Slack ##{config[:channel]}@#{team}.slack.com")
-        slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name}")
+        if fail_only
+          unless run_status.success?
+            slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail}")
+          end
+        else
+          slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail}")
+        end
       end
     rescue Exception => e
       Chef::Log.debug("Failed to send message to Slack: #{e.message}")
@@ -50,6 +58,19 @@ class Chef::Handler::Slack < Chef::Handler
   end
 
   private
+
+  def run_status_detail
+    case detail_level
+    when "basic"
+      return
+    when "elapsed"
+      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated"
+    when "resources"
+      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated\n#{updated_resources.join(", ").to_s}"
+    else
+      return
+    end
+  end
 
   def slack_message(content)
     slack = Slackr::Webhook.new(team, api_key, config)
