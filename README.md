@@ -23,6 +23,8 @@ Optional attributes
 * `node['chef_client']['handler']['slack']['username']` - The username of the Slack message
 * `node['chef_client']['handler']['slack']['icon_url']` - The Slack message icon
 * `node['chef_client']['handler']['slack']['icon_emoji']` - The Slack message icon defined by available `:emoji:`
+* `node['chef_client']['handler']['slack']['detail_level']` - The level of detail in the message. Valid options are `basic`, `elapsed` and `resources`
+* `node['chef_client']['handler']['slack']['fail_only']` - Only report when runs fail as opposed to every single occurance
 
 NOTE: Either `icon_url` or `icon_emoji` can be used. If both are set, `icon_url` will take precedence.
 
