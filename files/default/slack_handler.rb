@@ -52,7 +52,7 @@ class Chef::Handler::Slack < Chef::Handler
   private
 
   def slack_message(content)
-    slack = Slackr::Connect(team, api_key, config)
+    slack = Slackr::connect(team, api_key, config)
     slack.say(content)
   end
 
