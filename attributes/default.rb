@@ -20,7 +20,11 @@ default['chef_client']['handler']['slack']['api_key']    = nil
 
 # Optional attributes
 default['chef_client']['handler']['slack']['channel']    = nil
-default['chef_client']['handler']['slack']['username']   = nil
+default['chef_client']['handler']['slack']['username']   = node.name
+# Valid options here are basic, elapsed, resources
+default['chef_client']['handler']['slack']['detail_level'] = nil
+# Only report failures
+default['chef_client']['handler']['slack']['fail_only'] = nil
 
 default['chef_client']['handler']['slack']['icon_url']   = nil
 # OR
