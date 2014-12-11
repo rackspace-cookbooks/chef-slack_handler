@@ -18,17 +18,31 @@
 
 include_recipe "chef_handler"
 
-chef_gem "slackr"
+handler_file = ''
+handler_source = ''
 
-cookbook_file "#{node['chef_handler']['handler_path']}/slack_handler.rb" do
-  source "slack_handler.rb"
+Chef::Log.warn("rax-webhook-hash #{node['chef_client']['handler']['slack']['webhooks']}")
+
+# if webhook attribute set, use webhook handler, otherwise use slackr gem handler
+if node['chef_client']['handler']['slack']['webhooks'].nil?
+  # use slackr to post message. slackr gem and apikey required
+  chef_gem "slackr"
+  handler_file = "#{node['chef_handler']['handler_path']}/slack_handler.rb"
+  handler_source = "slack_handler.rb"
+else
+  handler_file = "#{node['chef_handler']['handler_path']}/slack_handler_webhook.rb"
+  handler_source = "slack_handler_webhook.rb"
+end
+
+cookbook_file handler_file do
+  source handler_source
   mode "0600"
   action :nothing
 # end
 end.run_action(:create)
 
 chef_handler "Chef::Handler::Slack" do
-  source "#{node['chef_handler']['handler_path']}/slack_handler.rb"
+  source handler_file
   arguments [
               node['chef_client']['handler']['slack']
             ]

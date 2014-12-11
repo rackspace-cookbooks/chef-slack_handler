@@ -14,18 +14,31 @@
 # limitations under the License.
 #
 
-# Required attributes
+# Attributes for Slack intergration Using slackr gem. Requires API key
+## required attributes
 default['chef_client']['handler']['slack']['team']       = nil
 default['chef_client']['handler']['slack']['api_key']    = nil
-
-# Optional attributes
+## Optional attributes
 default['chef_client']['handler']['slack']['channel']    = nil
+
+
+
+
+# Attributes for Slack intergration using webhook. No API key required. 
+# Multiple webhooks supported. Report detail and fail_only set per webhook.
+default_unless['chef_client']['handler']['slack']['webhooks']['name'] = []
+# use like this
+#default['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')
+#default['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = nil
+#default['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = nil
+#default['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = nil
+
+# shared attributes
 default['chef_client']['handler']['slack']['username']   = node.name
+default['chef_client']['handler']['slack']['icon_url']   = nil
+# OR
+default['chef_client']['handler']['slack']['icon_emoji'] = nil
 # Valid options here are basic, elapsed, resources
 default['chef_client']['handler']['slack']['detail_level'] = nil
 # Only report failures
 default['chef_client']['handler']['slack']['fail_only'] = nil
-
-default['chef_client']['handler']['slack']['icon_url']   = nil
-# OR
-default['chef_client']['handler']['slack']['icon_emoji'] = nil
