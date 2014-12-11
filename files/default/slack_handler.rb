@@ -46,7 +46,7 @@ class Chef::Handler::Slack < Chef::Handler
         Chef::Log.debug("Sending report to Slack ##{config[:channel]}@#{team}.slack.com")
         if fail_only
           unless run_status.success?
-            slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail}")
+            slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail} \n #{run_status.exception}")
           end
         else
           slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail}")
@@ -64,12 +64,13 @@ class Chef::Handler::Slack < Chef::Handler
     when "basic"
       return
     when "elapsed"
-      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated"
+      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated"  unless updated_resources.nil?
     when "resources"
-      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated\n#{updated_resources.join(", ").to_s}"
+      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated\n#{updated_resources.join(", ").to_s}"  unless updated_resources.nil?
     else
       return
     end
+    return
   end
 
   def slack_message(content)
