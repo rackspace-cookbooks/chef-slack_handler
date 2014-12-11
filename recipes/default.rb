@@ -21,8 +21,6 @@ include_recipe "chef_handler"
 handler_file = ''
 handler_source = ''
 
-Chef::Log.warn("rax-webhook-hash #{node['chef_client']['handler']['slack']['webhooks']}")
-
 # if webhook attribute set, use webhook handler, otherwise use slackr gem handler
 if node['chef_client']['handler']['slack']['webhooks'].nil?
   # use slackr to post message. slackr gem and apikey required

@@ -31,7 +31,6 @@ class Chef::Handler::Slack < Chef::Handler
     @icon_emoji = @config[:icon_emoji] || ':fork_and_knife:'
     @username = @config[:username] || 'chef_handler'
     @webhooks = @config[:webhooks]
-    Chef::Log.warn("@webhooks #{@webhooks}")
   end
 
   def report
