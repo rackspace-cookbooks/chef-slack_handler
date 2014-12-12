@@ -1,19 +1,29 @@
 Description
 ===========
 
-A cookbook for a `chef_handler` that sends reports and exceptions to Slack using an integration webhook.
+A cookbook for a `chef_handler` that sends reports and exceptions to Slack.  There are two options for use:
+1. Providing a team name and api_key (Uses the slackr gem)
+2. Providing a hash containing incoming webhook url(s)
 
 Requirements
 ============
 
 * The `chef_handler` cookbook
-* An existing Slack incoming webhook
+* An existing Slack incoming webhook(s)
 
-Attributes
+
+
+
+
+Usage 1
+=====
+
+1. Create a new Slack webhook ([https://slack.com/services/new/incoming-webhook](https://slack.com/services/new/incoming-webhook))
+2. Set the `team` and `api_key` attributes above on the node/environment/etc.
+3. Include this `slack_handler` recipe.
+
+Usage 1 Attributes
 ==========
-
-This cookbook uses the following attributes to configure how it is installed.
-
 * `node['chef_client']['handler']['slack']['team']` - Your Slack team name (<team-name>.slack.com)
 * `node['chef_client']['handler']['slack']['api_key']` - The API key of your Slack incoming webhook 
 
@@ -28,12 +38,30 @@ Optional attributes
 
 NOTE: Either `icon_url` or `icon_emoji` can be used. If both are set, `icon_url` will take precedence.
 
-Usage
+Usage 2
 =====
 
 1. Create a new Slack webhook ([https://slack.com/services/new/incoming-webhook](https://slack.com/services/new/incoming-webhook))
-2. Set the `team` and `api_key` attributes above on the node/environment/etc.
+2. Set the attributes as specified below
 3. Include this `slack_handler` recipe.
+
+Usage 2 Attributes
+==========
+
+* `node['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')`
+* `node['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = 'https://hooks.slack.com/services/1/2/3'`
+* `node['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = true`
+* `node['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = 'elapsed'`
+
+
+* `node['chef_client']['handler']['slack']['webhooks']['name'].push('webhook2')`
+* `node['chef_client']['handler']['slack']['webhooks']['webhook2']['url'] = 'https://hooks.slack.com/services/1/2/4'`
+* `node['chef_client']['handler']['slack']['webhooks']['webhook2']['fail_only'] = false`
+* `node['chef_client']['handler']['slack']['webhooks']['webhook2']['detail_level'] = 'resources'`
+
+* `node['chef_client']['handler']['slack']['username'] = 'Chef Handler - 2963351-crowdcube_app'`
+
+NOTE: Either `icon_url` or `icon_emoji` can be used. If both are set, `icon_url` will take precedence.
 
 Credits
 =======
