@@ -47,19 +47,18 @@ Usage 2
 
 Usage 2 Attributes
 ==========
-
+* `node['chef_client']['handler']['slack']['username'] = 'Chef Handler - 2963351-crowdcube_app'`
+* 
 * `node['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')`
 * `node['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = 'https://hooks.slack.com/1/2/3'`
 * `node['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = true`
 * `node['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = 'elapsed'`
-
 
 * `node['chef_client']['handler']['slack']['webhooks']['name'].push('webhook2')`
 * `node['chef_client']['handler']['slack']['webhooks']['webhook2']['url'] = 'https://hooks.slack.com/1/2/4'`
 * `node['chef_client']['handler']['slack']['webhooks']['webhook2']['fail_only'] = false`
 * `node['chef_client']['handler']['slack']['webhooks']['webhook2']['detail_level'] = 'resources'`
 
-* `node['chef_client']['handler']['slack']['username'] = 'Chef Handler - 2963351-crowdcube_app'`
 
 NOTE: Either `icon_url` or `icon_emoji` can be used. If both are set, `icon_url` will take precedence.
 
