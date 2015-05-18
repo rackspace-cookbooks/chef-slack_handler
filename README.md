@@ -5,15 +5,13 @@ A cookbook for a `chef_handler` that sends reports and exceptions to Slack.  The
 1. Providing a team name and api_key (Uses the slackr gem)
 2. Providing a hash containing incoming webhook url(s)
 
+This cookbook was originally a fork of [dcm-ops/chef-slack_handler](https://github.com/dcm-ops/chef-slack_handler). We have taken over maintenance of this cookbook and released it to Supermarket.
+
 Requirements
 ============
 
 * The `chef_handler` cookbook
 * An existing Slack incoming webhook(s)
-
-
-
-
 
 Usage 1
 =====
