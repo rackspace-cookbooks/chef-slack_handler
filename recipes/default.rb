@@ -36,13 +36,13 @@ cookbook_file handler_file do
   source handler_source
   mode "0600"
   action :nothing
-# end
+  # end
 end.run_action(:create)
 
 chef_handler "Chef::Handler::Slack" do
   source handler_file
   arguments [
-              node['chef_client']['handler']['slack']
-            ]
+    node['chef_client']['handler']['slack']
+  ]
   action :nothing
 end.run_action(:enable)
