@@ -1,3 +1,7 @@
+AllCops:
+  Exclude:
+    - tmp/**/*
+
 Lint/RescueException:
   Enabled: false
 Metrics/AbcSize:
