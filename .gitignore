@@ -1,2 +1,14 @@
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+pkg/
+
+# Bundler
+bin/*
+.bundle/*
+
 .kitchen/
 .kitchen.local.yml
