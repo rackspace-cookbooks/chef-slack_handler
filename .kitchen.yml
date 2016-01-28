@@ -17,7 +17,7 @@ platforms:
   - name: ubuntu-14.04
 
 suites:
-  - name: default
+  - name: gem
     run_list:
       - recipe[slack_handler]
     attributes:
@@ -26,3 +26,17 @@ suites:
           slack:
             team: foo
             api_key: bar
+  - name: webhook
+    run_list:
+      - recipe[slack_handler]
+    attributes:
+      chef_client:
+        handler:
+          slack:
+            team: foo
+            api_key: bar
+            webhooks:
+              name:
+                - test
+              test:
+                url: https://hooks.slack.local/1/2/3
