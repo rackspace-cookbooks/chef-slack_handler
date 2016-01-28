@@ -21,17 +21,14 @@ default['chef_client']['handler']['slack']['api_key']    = nil
 ## Optional attributes
 default['chef_client']['handler']['slack']['channel']    = nil
 
-
-
-
-# Attributes for Slack intergration using webhook. No API key required. 
+# Attributes for Slack intergration using webhook. No API key required.
 # Multiple webhooks supported. Report detail and fail_only set per webhook.
 default_unless['chef_client']['handler']['slack']['webhooks']['name'] = []
 # use like this
-#default['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')
-#default['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = nil
-#default['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = nil
-#default['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = nil
+# default['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')
+# default['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = nil
+# default['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = nil
+# default['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = nil
 
 # shared attributes
 default['chef_client']['handler']['slack']['username']   = node.name

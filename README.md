@@ -1,5 +1,6 @@
 Description
 ===========
+[![Build Status](https://img.shields.io/circleci/project/rackspace-cookbooks/chef-slack_handler/master.svg)](https://circleci.com/gh/rackspace-cookbooks/chef-slack_handler)
 
 A cookbook for a `chef_handler` that sends reports and exceptions to Slack.  There are two options for use:
 1. Providing a team name and api_key (Uses the slackr gem)
@@ -23,7 +24,7 @@ Usage 1
 Usage 1 Attributes
 ==========
 * `node['chef_client']['handler']['slack']['team']` - Your Slack team name (<team-name>.slack.com)
-* `node['chef_client']['handler']['slack']['api_key']` - The API key of your Slack incoming webhook 
+* `node['chef_client']['handler']['slack']['api_key']` - The API key of your Slack incoming webhook
 
 Optional attributes
 
@@ -46,7 +47,7 @@ Usage 2
 Usage 2 Attributes
 ==========
 * `node['chef_client']['handler']['slack']['username'] = 'Chef Handler - 2963351-crowdcube_app'`
-* 
+*
 * `node['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')`
 * `node['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = 'https://hooks.slack.com/1/2/3'`
 * `node['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = true`

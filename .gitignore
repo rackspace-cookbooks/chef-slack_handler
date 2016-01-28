@@ -1,2 +1,19 @@
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+pkg/
+
+# Bundler
+Gemfile.lock
+bin/*
+.bundle/*
+
 .kitchen/
 .kitchen.local.yml
+
+# Librarian
+.librarian/*
+tmp/

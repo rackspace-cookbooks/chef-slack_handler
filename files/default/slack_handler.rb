@@ -41,45 +41,37 @@ class Chef::Handler::Slack < Chef::Handler
   end
 
   def report
-    begin
-      Timeout::timeout(@timeout) do
-        Chef::Log.debug("Sending report to Slack ##{config[:channel]}@#{team}.slack.com")
-        if fail_only
-          unless run_status.success?
-            slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail} \n #{run_status.exception}")
-          end
-        else
-          slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail}")
+    Timeout.timeout(@timeout) do
+      Chef::Log.debug("Sending report to Slack ##{config[:channel]}@#{team}.slack.com")
+      if fail_only
+        unless run_status.success?
+          slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail} \n #{run_status.exception}")
         end
+      else
+        slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail}")
       end
-    rescue Exception => e
-      Chef::Log.debug("Failed to send message to Slack: #{e.message}")
     end
+  rescue Exception => e
+    Chef::Log.debug("Failed to send message to Slack: #{e.message}")
   end
 
   private
 
   def run_status_detail
     case detail_level
-    when "basic"
-      return
     when "elapsed"
-      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated"  unless updated_resources.nil?
+      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
     when "resources"
-      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated\n#{updated_resources.join(", ").to_s}"  unless updated_resources.nil?
-    else
-      return
+      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated\n#{updated_resources.join(', ')}" unless updated_resources.nil?
     end
-    return
   end
 
   def slack_message(content)
-    slack = Slackr::connect(team, api_key, config)
+    slack = Slackr.connect(team, api_key, config)
     slack.say(content)
   end
 
   def run_status_human_readable
     run_status.success? ? "succeeded" : "failed"
   end
-
 end

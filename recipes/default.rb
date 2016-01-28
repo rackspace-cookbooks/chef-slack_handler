@@ -22,7 +22,7 @@ handler_file = ''
 handler_source = ''
 
 # if webhook attribute set, use webhook handler, otherwise use slackr gem handler
-if node['chef_client']['handler']['slack']['webhooks'].nil?
+if node['chef_client']['handler']['slack']['webhooks']['name'].empty?
   # use slackr to post message. slackr gem and apikey required
   chef_gem "slackr"
   handler_file = "#{node['chef_handler']['handler_path']}/slack_handler.rb"
@@ -36,13 +36,13 @@ cookbook_file handler_file do
   source handler_source
   mode "0600"
   action :nothing
-# end
+  # end
 end.run_action(:create)
 
 chef_handler "Chef::Handler::Slack" do
   source handler_file
   arguments [
-              node['chef_client']['handler']['slack']
-            ]
+    node['chef_client']['handler']['slack']
+  ]
   action :nothing
 end.run_action(:enable)
