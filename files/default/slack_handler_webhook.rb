@@ -70,8 +70,20 @@ class Chef::Handler::Slack < Chef::Handler
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     req = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
-    req.body = { username: @username, text: message, icon_emoji: @icon_emoji }.to_json
+    req.body = request_body(message)
     http.request(req)
+  end
+
+  def request_body(message)
+    body = {}
+    body[:username] = @username
+    body[:text] = message
+    if @icon_url
+      body[:icon_url] = @icon_url
+    else
+      body[:icon_emoji] = @icon_emoji
+    end
+    body.to_json
   end
 
   def run_status_human_readable
