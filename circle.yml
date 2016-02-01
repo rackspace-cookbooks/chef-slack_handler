@@ -1,9 +1,10 @@
 dependencies:
-  override:
-    - bundle check --path=.bundle || bundle install --path=.bundle --jobs=4 --retry=3 --without integrationd
-        timeout: 900
   cache_directories:
-    - ".bundle"
+      - ".bundle"
+  override:
+    - bundle install --path=.bundle --jobs=4 --retry=3 --without integrationd:
+        timeout: 900
+
 machine:
   ruby:
     version: 2.2.3
