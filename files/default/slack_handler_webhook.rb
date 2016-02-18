@@ -37,7 +37,7 @@ class Chef::Handler::Slack < Chef::Handler
     @webhooks['name'].each do |val|
       webhook = node['chef_client']['handler']['slack']['webhooks'][val]
       Timeout.timeout(@timeout) do
-        Chef::Log.warn("Sending report to Slack webhook #{webhook['url']}")
+        Chef::Log.info("Sending report to Slack webhook #{webhook['url']}")
         if run_status.success?
           slack_message(" :white_check_mark: Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail(webhook['detail_level'])}", webhook['url']) unless webhook['fail_only']
         else
