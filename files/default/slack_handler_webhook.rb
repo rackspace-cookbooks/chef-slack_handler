@@ -40,9 +40,11 @@ class Chef::Handler::Slack < Chef::Handler
       Timeout.timeout(@timeout) do
         sending_to_slack = false
 
-        if run_status.success? && !webhook['fail_only']
-          slack_message(" :white_check_mark: #{message(webhook)}", webhook['url'])
-          sending_to_slack = true
+        if run_status.success?
+          unless webhook['fail_only']
+            slack_message(" :white_check_mark: #{message(webhook)}", webhook['url'])
+            sending_to_slack = true
+          end
         else
           sending_to_slack = true
           slack_message(" :skull: #{message(webhook)}", webhook['url'], run_status.exception)
