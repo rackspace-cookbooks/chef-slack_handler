@@ -28,8 +28,9 @@ class Chef::Handler::Slack < Chef::Handler
     # set defaults for any missing attributes
     @config = config
     @timeout = @config[:timeout] || 15
-    @icon_emoji = @config[:icon_emoji] || ':fork_and_knife:'
-    @username = @config[:username] || 'chef_handler'
+    @icon_emoji = @config[:icon_emoji]
+    @icon_url = @config[:icon_url]
+    @username = @config[:username]
     @webhooks = @config[:webhooks]
   end
 
@@ -40,11 +41,11 @@ class Chef::Handler::Slack < Chef::Handler
         sending_to_slack = false
 
         if run_status.success? && !webhook['fail_only']
-          slack_message(" :white_check_mark: Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail(webhook['detail_level'])}", webhook['url'])
+          slack_message(" :white_check_mark: #{message(webhook)}", webhook['url'])
           sending_to_slack = true
         else
           sending_to_slack = true
-          slack_message(" :skull: Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail(webhook['detail_level'])}", webhook['url'], run_status.exception)
+          slack_message(" :skull: #{message(webhook)}", webhook['url'], run_status.exception)
         end
         Chef::Log.info("Sending report to Slack webhook #{webhook['url']}") if sending_to_slack
       end
@@ -55,14 +56,18 @@ class Chef::Handler::Slack < Chef::Handler
 
   private
 
+  def message(webhook)
+    "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(webhook['cookbook_detail_level'])}#{run_status_detail(webhook['detail_level'])}"
+  end
+
   def run_status_detail(detail_level)
     case detail_level
     when "basic"
       return
     when "elapsed"
-      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
+      " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
     when "resources"
-      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated \n #{updated_resources.join(', ')}" unless updated_resources.nil?
+      " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated \n #{updated_resources.join(', ')}" unless updated_resources.nil?
     else
       return
     end
@@ -80,12 +85,12 @@ class Chef::Handler::Slack < Chef::Handler
 
   def request_body(message, text_attachment)
     body = {}
-    body[:username] = @username
+    body[:username] = @username unless @username.nil?
     body[:text] = message
     if @icon_url
       body[:icon_url] = @icon_url
     else
-      body[:icon_emoji] = @icon_emoji
+      body[:icon_emoji] = @icon_emoji unless @icon_emoji.nil?
     end
     body[:attachments] = [{ text: text_attachment }] unless text_attachment.nil?
     body.to_json
@@ -93,5 +98,20 @@ class Chef::Handler::Slack < Chef::Handler
 
   def run_status_human_readable
     run_status.success? ? "succeeded" : "failed"
+  end
+
+  def run_status_cookbook_detail(detail_level)
+    case detail_level
+    when "basic"
+      return
+    when "all"
+      cookbooks = run_status.run_context.cookbook_collection
+      " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
+    when "root"
+      root_cookbook = run_status.run_context.cookbook_collection.values.first
+      " using root cookbook \"#{root_cookbook.name} #{root_cookbook.version}\""
+    else
+      return
+    end
   end
 end

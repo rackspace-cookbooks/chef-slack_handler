@@ -45,10 +45,10 @@ class Chef::Handler::Slack < Chef::Handler
       Chef::Log.debug("Sending report to Slack ##{config[:channel]}@#{team}.slack.com")
       if fail_only
         unless run_status.success?
-          slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail} \n #{run_status.exception}")
+          slack_message("#{message(config)} \n #{run_status.exception}")
         end
       else
-        slack_message("Chef client run #{run_status_human_readable} on #{run_status.node.name} #{run_status_detail}")
+        slack_message(message(config).to_s)
       end
     end
   rescue Exception => e
@@ -57,12 +57,16 @@ class Chef::Handler::Slack < Chef::Handler
 
   private
 
+  def message(webhook)
+    "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(webhook['cookbook_detail_level'])}#{run_status_detail(webhook['detail_level'])}"
+  end
+
   def run_status_detail
     case detail_level
     when "elapsed"
-      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
+      " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
     when "resources"
-      "(#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated\n#{updated_resources.join(', ')}" unless updated_resources.nil?
+      " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated\n#{updated_resources.join(', ')}" unless updated_resources.nil?
     end
   end
 
@@ -73,5 +77,20 @@ class Chef::Handler::Slack < Chef::Handler
 
   def run_status_human_readable
     run_status.success? ? "succeeded" : "failed"
+  end
+
+  def run_status_cookbook_detail(detail_level)
+    case detail_level
+    when "basic"
+      return
+    when "all"
+      cookbooks = run_status.run_context.cookbook_collection
+      " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
+    when "root"
+      root_cookbook = run_status.run_context.cookbook_collection.values.first
+      " using root cookbook \"#{root_cookbook.name} #{root_cookbook.version}\""
+    else
+      return
+    end
   end
 end

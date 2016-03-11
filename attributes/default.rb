@@ -29,9 +29,10 @@ default_unless['chef_client']['handler']['slack']['webhooks']['name'] = []
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = nil
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = nil
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = nil
+# default['chef_client']['handler']['slack']['webhooks']['webhook1']['cookbook_detail_level'] = nil
 
 # shared attributes
-default['chef_client']['handler']['slack']['username']   = node.name
+default['chef_client']['handler']['slack']['username']   = nil
 default['chef_client']['handler']['slack']['icon_url']   = nil
 # OR
 default['chef_client']['handler']['slack']['icon_emoji'] = nil
