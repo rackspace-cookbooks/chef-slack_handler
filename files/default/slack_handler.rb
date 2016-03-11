@@ -57,8 +57,8 @@ class Chef::Handler::Slack < Chef::Handler
 
   private
 
-  def message(webhook)
-    "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(webhook['cookbook_detail_level'])}#{run_status_detail(webhook['detail_level'])}"
+  def message(context)
+    "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}#{run_status_detail(context['detail_level'])}"
   end
 
   def run_status_detail

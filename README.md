@@ -33,7 +33,8 @@ Optional attributes
 * `node['chef_client']['handler']['slack']['icon_url']` - The Slack message icon
 * `node['chef_client']['handler']['slack']['icon_emoji']` - The Slack message icon defined by available `:emoji:`
 * `node['chef_client']['handler']['slack']['detail_level']` - The level of detail in the message. Valid options are `basic`, `elapsed` and `resources`
-* `node['chef_client']['handler']['slack']['fail_only']` - Only report when runs fail as opposed to every single occurance
+* `node['chef_client']['handler']['slack']['fail_only']` - Only report when runs fail as opposed to every single occurrence
+* `node['chef_client']['handler']['slack']['cookbook_detail_level']` - The level of detail about the cookbook used in the message. Valid options are `basic`, `root` and `all`
 
 NOTE: Either `icon_url` or `icon_emoji` can be used. If both are set, `icon_url` will take precedence.
 
@@ -52,11 +53,13 @@ node['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = 'https://hooks.slack.com/1/2/3'
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = true
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = 'elapsed'
+node['chef_client']['handler']['slack']['webhooks']['webhook1']['cookbook_detail_level'] = 'root'
 
 node['chef_client']['handler']['slack']['webhooks']['name'].push('webhook2')
 node['chef_client']['handler']['slack']['webhooks']['webhook2']['url'] = 'https://hooks.slack.com/1/2/4'
 node['chef_client']['handler']['slack']['webhooks']['webhook2']['fail_only'] = false
 node['chef_client']['handler']['slack']['webhooks']['webhook2']['detail_level'] = 'resources'
+node['chef_client']['handler']['slack']['webhooks']['webhook2']['cookbook_detail_level'] = 'all'
 ```
 
 Optional attributes
