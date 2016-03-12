@@ -28,16 +28,18 @@ end
 require "timeout"
 
 class Chef::Handler::Slack < Chef::Handler
-  attr_reader :team, :api_key, :config, :timeout, :fail_only, :detail_level
+  attr_reader :team, :api_key, :config, :timeout, :fail_only, :detail_level, :cookbook_detail_level
 
   def initialize(config = {})
-    @config  = config.dup
-    @team    = @config.delete(:team)
-    @api_key = @config.delete(:api_key)
-    @timeout = @config.delete(:timeout) || 15
-    @fail_only = @config.delete(:fail_only) || false
-    @detail_level = @config.delete(:detail_level) || 'basic'
-    @config.delete(:icon_emoji) if @config[:icon_url] && @config[:icon_emoji]
+    @config = config
+    setup_slackr_options(@config)
+
+    @team = @config[:team]
+    @api_key = @config[:api_key]
+    @timeout = @config[:timeout]
+    @fail_only = @config[:fail_only]
+    @detail_level = @config[:detail_level]
+    @cookbook_detail_level = @config[:cookbook_detail_level]
   end
 
   def report
@@ -45,10 +47,10 @@ class Chef::Handler::Slack < Chef::Handler
       Chef::Log.debug("Sending report to Slack ##{config[:channel]}@#{team}.slack.com")
       if fail_only
         unless run_status.success?
-          slack_message("#{message(config)} \n #{run_status.exception}")
+          slack_message("#{message(config)} \n #{run_status.exception}", run_status.node.name)
         end
       else
-        slack_message(message(config).to_s)
+        slack_message(message(config).to_s, run_status.node.name)
       end
     end
   rescue Exception => e
@@ -57,11 +59,21 @@ class Chef::Handler::Slack < Chef::Handler
 
   private
 
+  def setup_slackr_options(config = {})
+    # options to be passed to slackr gem
+    @slackr_options = {}
+    # icon_url takes precedence over icon_emoji
+    @slackr_options[:icon_url] = config[:icon_url] if config[:icon_url]
+    @slackr_options[:icon_emoji] = config[:icon_emoji] unless config[:icon_url]
+    @slackr_options[:channel] = config[:channel]
+    @slackr_options[:username] = config[:username]
+  end
+
   def message(context)
     "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}#{run_status_detail(context['detail_level'])}"
   end
 
-  def run_status_detail
+  def run_status_detail(detail_level)
     case detail_level
     when "elapsed"
       " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
@@ -70,8 +82,9 @@ class Chef::Handler::Slack < Chef::Handler
     end
   end
 
-  def slack_message(content)
-    slack = Slackr.connect(team, api_key, config)
+  def slack_message(content, node_name)
+    slackr_options[:username] = node_name unless slackr_options[:username]
+    slack = Slackr.connect(team, api_key, slackr_options)
     slack.say(content)
   end
 
@@ -81,7 +94,7 @@ class Chef::Handler::Slack < Chef::Handler
 
   def run_status_cookbook_detail(detail_level)
     case detail_level
-    when "basic"
+    when "off"
       return
     when "all"
       cookbooks = run_status.run_context.cookbook_collection

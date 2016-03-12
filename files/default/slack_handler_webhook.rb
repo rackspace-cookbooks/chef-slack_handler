@@ -22,12 +22,11 @@ require 'net/http'
 require "timeout"
 
 class Chef::Handler::Slack < Chef::Handler
-  attr_reader :webhooks, :username, :config, :timeout, :icon_emoji, :fail_only, :detail_level
+  attr_reader :webhooks, :username, :config, :timeout, :icon_emoji, :fail_only, :detail_level, :cookbook_detail_level
 
   def initialize(config = {})
-    # set defaults for any missing attributes
     @config = config
-    @timeout = @config[:timeout] || 15
+    @timeout = @config[:timeout]
     @icon_emoji = @config[:icon_emoji]
     @icon_url = @config[:icon_url]
     @username = @config[:username]
@@ -89,6 +88,7 @@ class Chef::Handler::Slack < Chef::Handler
     body = {}
     body[:username] = @username unless @username.nil?
     body[:text] = message
+    # icon_url takes precedence over icon_emoji
     if @icon_url
       body[:icon_url] = @icon_url
     else
@@ -104,7 +104,7 @@ class Chef::Handler::Slack < Chef::Handler
 
   def run_status_cookbook_detail(detail_level)
     case detail_level
-    when "basic"
+    when "off"
       return
     when "all"
       cookbooks = run_status.run_context.cookbook_collection
