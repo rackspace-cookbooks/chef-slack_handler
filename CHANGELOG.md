@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.5.0 (2016-03-14)
+- Added `cookbook_detail_level` configuration which provides the optional ability to include the root cookbook or list of all cookbooks used in the message to Slack. Values inside README.md (#17)
+- Some defaults have been removed from the WebHook integration to allow Slack WebHook default configuration to be used, can still be overridden (#16). The slackr integration remains the same. Specifically:
+  - `username` no longer defaults to `node.name`
+  - `username` no longer defaults to `chef_handler`
+  - `icon_emoji` no longer defaults to `:fork_and_knife:`
+- Optional `fail_only`, `detail_level` and `cookbook_detail_level` attributes for WebHook can now drop down to global attributes (#18)
+- icon_url now works as expected for WebHook configuration (#15)
+- Clarified items in README.md including `channel` being mandatory for the slackr integration; presence of optional `timeout` attribute; what the defaults are (#21)
+
 ## v0.4.0 (2016-03-09)
 - Add CHANGELOG.md (#11)
 - Move exception from message to text attachment (#12)

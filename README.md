@@ -25,18 +25,18 @@ Usage 1 Attributes
 ==========
 * `node['chef_client']['handler']['slack']['team']` - Your Slack team name (<team-name>.slack.com)
 * `node['chef_client']['handler']['slack']['api_key']` - The API key of your Slack incoming webhook
+* `node['chef_client']['handler']['slack']['channel']` - The #channel to send the results, should include the hash
 
 Optional attributes
+* `node['chef_client']['handler']['slack']['username']` - The username of the Slack message, defaults to the node name
+* `node['chef_client']['handler']['slack']['icon_url']` - The Slack message icon, defaults to nil
+* `node['chef_client']['handler']['slack']['icon_emoji']` - The Slack message icon defined by available `:emoji:`, defaults to nil
+* `node['chef_client']['handler']['slack']['timeout']` - Timeout in seconds for the Slack API call, defaults to 15
+* `node['chef_client']['handler']['slack']['fail_only']` - Only report when runs fail as opposed to every single occurrence, defaults to false
+* `node['chef_client']['handler']['slack']['detail_level']` - The level of detail in the message. Valid options are `basic`, `elapsed` and `resources`, defaults to `basic`
+* `node['chef_client']['handler']['slack']['cookbook_detail_level']` - The level of detail about the cookbook used in the message. Valid options are `off`, `root` and `all`, defaults to `off`
 
-* `node['chef_client']['handler']['slack']['channel']` - The #channel to send the results
-* `node['chef_client']['handler']['slack']['username']` - The username of the Slack message
-* `node['chef_client']['handler']['slack']['icon_url']` - The Slack message icon
-* `node['chef_client']['handler']['slack']['icon_emoji']` - The Slack message icon defined by available `:emoji:`
-* `node['chef_client']['handler']['slack']['detail_level']` - The level of detail in the message. Valid options are `basic`, `elapsed` and `resources`
-* `node['chef_client']['handler']['slack']['fail_only']` - Only report when runs fail as opposed to every single occurrence
-* `node['chef_client']['handler']['slack']['cookbook_detail_level']` - The level of detail about the cookbook used in the message. Valid options are `basic`, `root` and `all`
-
-NOTE: Either `icon_url` or `icon_emoji` can be used. If both are set, `icon_url` will take precedence.
+NOTE: If both `icon_url` and `icon_emoji` are set, `icon_url` will take precedence.
 
 Usage 2
 =====
@@ -49,34 +49,45 @@ Usage 2 Attributes
 ==========
 Push as many webhooks as you wish onto the node config:
 ```
+# Add `webhook1` URL
 node['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = 'https://hooks.slack.com/1/2/3'
-node['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = true
-node['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = 'elapsed'
-node['chef_client']['handler']['slack']['webhooks']['webhook1']['cookbook_detail_level'] = 'root'
 
+# Add `webhook2` URL
 node['chef_client']['handler']['slack']['webhooks']['name'].push('webhook2')
 node['chef_client']['handler']['slack']['webhooks']['webhook2']['url'] = 'https://hooks.slack.com/1/2/4'
-node['chef_client']['handler']['slack']['webhooks']['webhook2']['fail_only'] = false
-node['chef_client']['handler']['slack']['webhooks']['webhook2']['detail_level'] = 'resources'
-node['chef_client']['handler']['slack']['webhooks']['webhook2']['cookbook_detail_level'] = 'all'
 ```
 
-Optional attributes
+Optional attributes global to all webhooks:
 ```
 # Timeout in seconds for the Slack API call, defaults to 15
 node['chef_client']['handler']['slack']['timeout'] = 30
 
-# Customizations for Slack WebHook config
-# See https://api.slack.com/incoming-webhooks#customizations_for_custom_integrations
-node['chef_client']['handler']['slack']['username'] = 'Handle Used To Post'
-# Icon URL, defaults to Slack WebHook config
+## Customizations for Slack WebHook config
+## See https://api.slack.com/incoming-webhooks#customizations_for_custom_integrations
+# The username of the Slack message, defaults to Slack WebHook config (i.e. nil)
+node['chef_client']['handler']['slack']['username'] = 'Chef Bot'
+# Icon URL, defaults to Slack WebHook config (i.e. nil)
 node['chef_client']['handler']['slack']['icon_url'] = 'https://avatars1.githubusercontent.com/u/29740'
-# Emoji for the Slack call, defaults to Slack WebHook config
+# Emoji for the Slack call, defaults to Slack WebHook config (i.e. nil)
 node['chef_client']['handler']['slack']['icon_emoji'] = ':fork_and_knife:'
-```
 
+# Only report when runs fail as opposed to every single occurrence, defaults to false
+node['chef_client']['handler']['slack']['fail_only'] = true
+# The level of detail in the message. Valid options are 'basic', 'elapsed' and 'resources', defaults to 'basic'
+node['chef_client']['handler']['slack']['detail_level'] = 'resources'
+# The level of detail about the cookbook used in the message. Valid options are 'off', 'root' and 'all', defaults to 'off'
+node['chef_client']['handler']['slack']['cookbook_detail_level'] = 'root'
+```
 NOTE: If both `icon_url` and `icon_emoji` are set, `icon_url` will take precedence.
+
+Each webhook may also override the `fail_only`, `detail_level` and `cookbook_detail_level` global optional attributes:
+```
+# Optional attributes for `webhook1`
+node['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = true
+node['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = 'elapsed'
+node['chef_client']['handler']['slack']['webhooks']['webhook1']['cookbook_detail_level'] = 'all'
+```
 
 Credits
 =======
