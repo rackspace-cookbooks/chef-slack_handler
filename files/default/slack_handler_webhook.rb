@@ -31,6 +31,9 @@ class Chef::Handler::Slack < Chef::Handler
     @icon_url = @config[:icon_url]
     @username = @config[:username]
     @webhooks = @config[:webhooks]
+    @fail_only = @config[:fail_only]
+    @detail_level = @config[:detail_level]
+    @cookbook_detail_level = @config[:cookbook_detail_level]
   end
 
   def report
@@ -40,7 +43,7 @@ class Chef::Handler::Slack < Chef::Handler
         sending_to_slack = false
 
         if run_status.success?
-          unless webhook['fail_only']
+          unless fail_only(webhook)
             slack_message(" :white_check_mark: #{message(webhook)}", webhook['url'])
             sending_to_slack = true
           end
@@ -57,11 +60,17 @@ class Chef::Handler::Slack < Chef::Handler
 
   private
 
+  def fail_only(webhook)
+    return webhook['fail_only'] unless webhook['fail_only'].nil?
+    @fail_only
+  end
+
   def message(context)
     "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}#{run_status_detail(context['detail_level'])}"
   end
 
   def run_status_detail(detail_level)
+    detail_level ||= @detail_level
     case detail_level
     when "basic"
       return
@@ -103,6 +112,7 @@ class Chef::Handler::Slack < Chef::Handler
   end
 
   def run_status_cookbook_detail(detail_level)
+    detail_level ||= @cookbook_detail_level
     case detail_level
     when "off"
       return
