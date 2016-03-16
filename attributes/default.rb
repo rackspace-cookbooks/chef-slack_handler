@@ -28,7 +28,7 @@ default_unless['chef_client']['handler']['slack']['webhooks']['name'] = []
 # default['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = nil
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = nil
-# default['chef_client']['handler']['slack']['webhooks']['webhook1']['detail_level'] = nil
+# default['chef_client']['handler']['slack']['webhooks']['webhook1']['message_detail_level'] = nil
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['cookbook_detail_level'] = nil
 
 # shared attributes
@@ -38,8 +38,8 @@ default['chef_client']['handler']['slack']['icon_url']   = nil
 # OR
 default['chef_client']['handler']['slack']['icon_emoji'] = nil
 # Valid options here are basic, elapsed, resources
-default['chef_client']['handler']['slack']['detail_level'] = 'basic'
-# Valid options here are off, root, all
+default['chef_client']['handler']['slack']['message_detail_level'] = 'basic'
+# Valid options here are off, all
 default['chef_client']['handler']['slack']['cookbook_detail_level'] = 'off'
 # Only report failures
 default['chef_client']['handler']['slack']['fail_only'] = false

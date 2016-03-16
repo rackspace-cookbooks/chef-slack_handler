@@ -6,7 +6,7 @@
   - `username` no longer defaults to `node.name`
   - `username` no longer defaults to `chef_handler`
   - `icon_emoji` no longer defaults to `:fork_and_knife:`
-- Optional `fail_only`, `detail_level` and `cookbook_detail_level` attributes for WebHook can now drop down to global attributes (#18)
+- Optional `fail_only`, `message_detail_level` and `cookbook_detail_level` attributes for WebHook can now drop down to global attributes (#18)
 - icon_url now works as expected for WebHook configuration (#15)
 - Clarified items in README.md including `channel` being mandatory for the slackr integration; presence of optional `timeout` attribute; what the defaults are (#21)
 
