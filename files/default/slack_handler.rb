@@ -102,9 +102,6 @@ class Chef::Handler::Slack < Chef::Handler
     when "all"
       cookbooks = run_status.run_context.cookbook_collection
       " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
-    when "root"
-      root_cookbook = run_status.run_context.cookbook_collection.values.first
-      " using root cookbook \"#{root_cookbook.name} #{root_cookbook.version}\""
     end
   end
 end

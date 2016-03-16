@@ -34,7 +34,7 @@ Optional attributes
 * `node['chef_client']['handler']['slack']['timeout']` - Timeout in seconds for the Slack API call, defaults to 15
 * `node['chef_client']['handler']['slack']['fail_only']` - Only report when runs fail as opposed to every single occurrence, defaults to false
 * `node['chef_client']['handler']['slack']['message_detail_level']` - The level of detail in the message. Valid options are `basic`, `elapsed` and `resources`, defaults to `basic`
-* `node['chef_client']['handler']['slack']['cookbook_detail_level']` - The level of detail about the cookbook used in the message. Valid options are `off`, `root` and `all`, defaults to `off`
+* `node['chef_client']['handler']['slack']['cookbook_detail_level']` - The level of detail about the cookbook used in the message. Valid options are `off` and `all`, defaults to `off`
 
 NOTE: If both `icon_url` and `icon_emoji` are set, `icon_url` will take precedence.
 
@@ -76,8 +76,8 @@ node['chef_client']['handler']['slack']['icon_emoji'] = ':fork_and_knife:'
 node['chef_client']['handler']['slack']['fail_only'] = true
 # The level of detail in the message. Valid options are 'basic', 'elapsed' and 'resources', defaults to 'basic'
 node['chef_client']['handler']['slack']['message_detail_level'] = 'resources'
-# The level of detail about the cookbook used in the message. Valid options are 'off', 'root' and 'all', defaults to 'off'
-node['chef_client']['handler']['slack']['cookbook_detail_level'] = 'root'
+# The level of detail about the cookbook used in the message. Valid options are 'off' and 'all', defaults to 'off'
+node['chef_client']['handler']['slack']['cookbook_detail_level'] = 'all'
 ```
 NOTE: If both `icon_url` and `icon_emoji` are set, `icon_url` will take precedence.
 

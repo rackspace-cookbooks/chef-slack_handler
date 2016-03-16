@@ -1,7 +1,7 @@
 # Changelog
 
 ## v0.5.0
-- Added `cookbook_detail_level` configuration which provides the optional ability to include the root cookbook or list of all cookbooks used in the message to Slack. Values inside README.md (#17)
+- Added `cookbook_detail_level` configuration which provides the optional ability to include a list of all cookbooks used in the message to Slack. Values inside README.md (#17)
 - Some defaults have been removed from the WebHook integration to allow Slack WebHook default configuration to be used, can still be overridden (#16). The slackr integration remains the same. Specifically:
   - `username` no longer defaults to `node.name`
   - `username` no longer defaults to `chef_handler`
