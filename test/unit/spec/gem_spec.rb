@@ -23,7 +23,6 @@ describe 'slack_handler::default' do
         it 'converges' do
           expect(chef_run).to be_truthy
         end
-
       end
     end
   end

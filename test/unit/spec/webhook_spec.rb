@@ -16,7 +16,6 @@ describe 'slack_handler::default' do
             node.set['chef_client']['handler']['slack']['api_key'] = 'bar'
             node.set['chef_client']['handler']['slack']['webhooks']['name'] = ['bar']
             node.set['chef_client']['handler']['slack']['webhooks']['test']['url'] = 'https://hooks.slack.local/1/2/3'
-
           end.converge(described_recipe)
         end
 
@@ -26,7 +25,6 @@ describe 'slack_handler::default' do
         it 'converges' do
           expect(chef_run).to be_truthy
         end
-
       end
     end
   end

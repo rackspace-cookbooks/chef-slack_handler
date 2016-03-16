@@ -10,4 +10,5 @@ machine:
     version: 2.2.3
 test:
   override:
-    - bundle exec rake
+    - bundle exec rake style
+    - bundle exec rake spec
