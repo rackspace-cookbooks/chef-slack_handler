@@ -72,14 +72,10 @@ class Chef::Handler::Slack < Chef::Handler
   def run_status_detail(detail_level)
     detail_level ||= @detail_level
     case detail_level
-    when "basic"
-      return
     when "elapsed"
       " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
     when "resources"
       " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated \n #{updated_resources.join(', ')}" unless updated_resources.nil?
-    else
-      return
     end
   end
 
@@ -100,8 +96,8 @@ class Chef::Handler::Slack < Chef::Handler
     # icon_url takes precedence over icon_emoji
     if @icon_url
       body[:icon_url] = @icon_url
-    else
-      body[:icon_emoji] = @icon_emoji unless @icon_emoji.nil?
+    elsif @icon_emoji
+      body[:icon_emoji] = @icon_emoji
     end
     body[:attachments] = [{ text: text_attachment }] unless text_attachment.nil?
     body.to_json
@@ -114,16 +110,12 @@ class Chef::Handler::Slack < Chef::Handler
   def run_status_cookbook_detail(detail_level)
     detail_level ||= @cookbook_detail_level
     case detail_level
-    when "off"
-      return
     when "all"
       cookbooks = run_status.run_context.cookbook_collection
       " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
     when "root"
       root_cookbook = run_status.run_context.cookbook_collection.values.first
       " using root cookbook \"#{root_cookbook.name} #{root_cookbook.version}\""
-    else
-      return
     end
   end
 end

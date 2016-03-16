@@ -63,8 +63,11 @@ class Chef::Handler::Slack < Chef::Handler
     # options to be passed to slackr gem
     @slackr_options = {}
     # icon_url takes precedence over icon_emoji
-    @slackr_options[:icon_url] = config[:icon_url] if config[:icon_url]
-    @slackr_options[:icon_emoji] = config[:icon_emoji] unless config[:icon_url]
+    if config[:icon_url]
+      @slackr_options[:icon_url] = config[:icon_url]
+    elsif config[:icon_emoji]
+      @slackr_options[:icon_emoji] = config[:icon_emoji]
+    end
     @slackr_options[:channel] = config[:channel]
     @slackr_options[:username] = config[:username]
   end
@@ -83,8 +86,8 @@ class Chef::Handler::Slack < Chef::Handler
   end
 
   def slack_message(content, node_name)
-    slackr_options[:username] = node_name unless slackr_options[:username]
-    slack = Slackr.connect(team, api_key, slackr_options)
+    @slackr_options[:username] = node_name unless @slackr_options[:username]
+    slack = Slackr.connect(team, api_key, @slackr_options)
     slack.say(content)
   end
 
@@ -94,16 +97,12 @@ class Chef::Handler::Slack < Chef::Handler
 
   def run_status_cookbook_detail(detail_level)
     case detail_level
-    when "off"
-      return
     when "all"
       cookbooks = run_status.run_context.cookbook_collection
       " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
     when "root"
       root_cookbook = run_status.run_context.cookbook_collection.values.first
       " using root cookbook \"#{root_cookbook.name} #{root_cookbook.version}\""
-    else
-      return
     end
   end
 end
