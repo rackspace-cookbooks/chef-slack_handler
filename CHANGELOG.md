@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.6.0
+- Fix a bug in run_context where we should be calling `Chef.run_context`, correct an incorrect method name. (#22)
+
 ## v0.5.0
 - Added `cookbook_detail_level` configuration which provides the optional ability to include a list of all cookbooks used in the message to Slack. Values inside README.md (#17)
 - Some defaults have been removed from the WebHook integration to allow Slack WebHook default configuration to be used, can still be overridden (#16). The slackr integration remains the same. Specifically:
