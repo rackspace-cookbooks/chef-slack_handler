@@ -68,7 +68,7 @@ class Chef::Handler::Slack < Chef::Handler
   end
 
   def message(context)
-    "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}#{run_status_detail(context['message_detail_level'])}"
+    "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}#{run_status_message_detail(context['message_detail_level'])}"
   end
 
   def run_status_message_detail(message_detail_level)
@@ -114,7 +114,7 @@ class Chef::Handler::Slack < Chef::Handler
     cookbook_detail_level ||= @cookbook_detail_level
     case cookbook_detail_level
     when "all"
-      cookbooks = run_status.run_context.cookbook_collection
+      cookbooks = Chef.run_context.cookbook_collection
       " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
     end
   end
