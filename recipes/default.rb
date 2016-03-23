@@ -48,6 +48,7 @@ chef_handler "Chef::Handler::Slack" do
   action :nothing
 end.run_action(:enable)
 
+# Based on https://github.com/onddo/chef-handler-zookeeper
 ruby_block 'trigger_start_handlers' do
   block do
     require 'chef/run_status'
