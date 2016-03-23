@@ -44,5 +44,15 @@ chef_handler "Chef::Handler::Slack" do
   arguments [
     node['chef_client']['handler']['slack']
   ]
+  supports start: true, report: true, exception: true
   action :nothing
 end.run_action(:enable)
+
+ruby_block 'trigger_start_handlers' do
+  block do
+    require 'chef/run_status'
+    require 'chef/handler'
+    Chef::Handler.run_start_handlers(self)
+  end
+  action :nothing
+end.run_action(:create)

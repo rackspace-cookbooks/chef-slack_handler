@@ -22,7 +22,7 @@ require 'net/http'
 require "timeout"
 
 class Chef::Handler::Slack < Chef::Handler
-  attr_reader :webhooks, :username, :config, :timeout, :icon_emoji, :fail_only, :message_detail_level, :cookbook_detail_level
+  attr_reader :webhooks, :username, :config, :timeout, :icon_emoji, :fail_only, :send_start_notice, :message_detail_level, :cookbook_detail_level
 
   def initialize(config = {})
     Chef::Log.debug('Initializing Chef::Handler::Slack')
@@ -33,6 +33,7 @@ class Chef::Handler::Slack < Chef::Handler
     @username = @config[:username]
     @webhooks = @config[:webhooks]
     @fail_only = @config[:fail_only]
+    @send_start_notice = @config[:send_start_notice]
     @message_detail_level = @config[:message_detail_level]
     @cookbook_detail_level = @config[:cookbook_detail_level]
   end
@@ -42,17 +43,11 @@ class Chef::Handler::Slack < Chef::Handler
       Chef::Log.debug("Sending handler report to webhook #{val}")
       webhook = node['chef_client']['handler']['slack']['webhooks'][val]
       Timeout.timeout(@timeout) do
-        sending_to_slack = false
-
-        if run_status.success?
-          unless fail_only(webhook)
-            slack_message(" :white_check_mark: #{message(webhook)}", webhook['url'])
-            sending_to_slack = true
-          end
-        else
-          sending_to_slack = true
-          slack_message(" :skull: #{message(webhook)}", webhook['url'], run_status.exception)
-        end
+        sending_to_slack = if run_status.is_a?(Chef::RunStatus)
+                             report_chef_run_end(webhook)
+                           else
+                             report_chef_run_start(webhook)
+                           end
         Chef::Log.info("Sending report to Slack webhook #{webhook['url']}") if sending_to_slack
       end
     end
@@ -62,12 +57,35 @@ class Chef::Handler::Slack < Chef::Handler
 
   private
 
+  def report_chef_run_start(webhook)
+    return false unless send_start_notice(webhook)
+    slack_message(" :gear: #{start_message(config)}", webhook['url'])
+  end
+
+  def report_chef_run_end(webhook)
+    if run_status.success?
+      return false unless fail_only(webhook)
+      slack_message(" :white_check_mark: #{end_message(webhook)}", webhook['url'])
+    else
+      slack_message(" :skull: #{end_message(webhook)}", webhook['url'], run_status.exception)
+    end
+  end
+
   def fail_only(webhook)
     return webhook['fail_only'] unless webhook['fail_only'].nil?
     @fail_only
   end
 
-  def message(context)
+  def send_start_notice(webhook)
+    return webhook['send_start_notice'] unless webhook['send_start_notice'].nil?
+    @send_start_notice
+  end
+
+  def start_message(context)
+    "Chef client run started on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}"
+  end
+
+  def end_message(context)
     "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}#{run_status_message_detail(context['message_detail_level'])}"
   end
 
