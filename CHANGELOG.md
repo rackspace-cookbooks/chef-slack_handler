@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.0
+- Added `send_start_message` configuration which if set to `true` sends out a message when this cookbook is run. This is not quite the same as a [Chef start handler](https://docs.chef.io/handlers.html) but requires no additional setup to run. If you have other start handlers registered, they may run twice due if you turn this setting on. Default setting is `false`.
+
 ## v0.6.0
 - Fix a bug in run_context where we should be calling `Chef.run_context`, correct an incorrect method name. (#22)
 
@@ -9,8 +12,9 @@
   - `username` no longer defaults to `node.name`
   - `username` no longer defaults to `chef_handler`
   - `icon_emoji` no longer defaults to `:fork_and_knife:`
+- Changed `detail_level` to `message_detail_level` in order to clarify its meaning against `cookbook_detail_level`
 - Optional `fail_only`, `message_detail_level` and `cookbook_detail_level` attributes for WebHook can now drop down to global attributes (#18)
-- icon_url now works as expected for WebHook configuration (#15)
+- `icon_url` now works as expected for WebHook configuration (#15)
 - Clarified items in README.md including `channel` being mandatory for the slackr integration; presence of optional `timeout` attribute; what the defaults are (#21)
 
 ## v0.4.0 (2016-03-09)

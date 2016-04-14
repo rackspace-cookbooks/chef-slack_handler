@@ -22,7 +22,7 @@ require 'net/http'
 require "timeout"
 
 class Chef::Handler::Slack < Chef::Handler
-  attr_reader :webhooks, :username, :config, :timeout, :icon_emoji, :fail_only, :send_start_notice, :message_detail_level, :cookbook_detail_level
+  attr_reader :webhooks, :username, :config, :timeout, :icon_emoji, :fail_only, :send_start_message, :message_detail_level, :cookbook_detail_level
 
   def initialize(config = {})
     Chef::Log.debug('Initializing Chef::Handler::Slack')
@@ -33,7 +33,7 @@ class Chef::Handler::Slack < Chef::Handler
     @username = @config[:username]
     @webhooks = @config[:webhooks]
     @fail_only = @config[:fail_only]
-    @send_start_notice = @config[:send_start_notice]
+    @send_start_message = @config[:send_start_message]
     @message_detail_level = @config[:message_detail_level]
     @cookbook_detail_level = @config[:cookbook_detail_level]
   end
@@ -58,13 +58,13 @@ class Chef::Handler::Slack < Chef::Handler
   private
 
   def report_chef_run_start(webhook)
-    return false unless send_start_notice(webhook)
-    slack_message(" :gear: #{start_message(config)}", webhook['url'])
+    return false unless send_on_start(webhook)
+    slack_message(" :gear: #{start_message(webhook)}", webhook['url'])
   end
 
   def report_chef_run_end(webhook)
     if run_status.success?
-      return false unless fail_only(webhook)
+      return false if fail_only(webhook)
       slack_message(" :white_check_mark: #{end_message(webhook)}", webhook['url'])
     else
       slack_message(" :skull: #{end_message(webhook)}", webhook['url'], run_status.exception)
@@ -76,9 +76,9 @@ class Chef::Handler::Slack < Chef::Handler
     @fail_only
   end
 
-  def send_start_notice(webhook)
-    return webhook['send_start_notice'] unless webhook['send_start_notice'].nil?
-    @send_start_notice
+  def send_on_start(webhook)
+    return webhook['send_start_message'] unless webhook['send_start_message'].nil?
+    @send_start_message
   end
 
   def start_message(context)
