@@ -24,7 +24,9 @@ handler_source = ''
 # if webhook attribute set, use webhook handler, otherwise use slackr gem handler
 if node['chef_client']['handler']['slack']['webhooks']['name'].empty?
   # use slackr to post message. slackr gem and apikey required
-  chef_gem "slackr"
+  chef_gem 'slackr' do
+    compile_time false if respond_to?(:compile_time)
+  end
   handler_file = "#{node['chef_handler']['handler_path']}/slack_handler.rb"
   handler_source = "slack_handler.rb"
 else
