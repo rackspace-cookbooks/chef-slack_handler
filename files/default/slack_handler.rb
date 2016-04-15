@@ -26,12 +26,14 @@ rescue LoadError
 end
 
 require "timeout"
+require_relative 'slack_handler_util'
 
 class Chef::Handler::Slack < Chef::Handler
-  attr_reader :team, :api_key, :config, :timeout, :fail_only, :send_start_message, :message_detail_level, :cookbook_detail_level
+  attr_reader :team, :api_key, :config, :timeout, :fail_only, :message_detail_level, :cookbook_detail_level
 
   def initialize(config = {})
     Chef::Log.debug('Initializing Chef::Handler::Slack')
+    @util = SlackHandlerUtil.new(config)
     @config = config
     setup_slackr_options(@config)
 
@@ -39,7 +41,6 @@ class Chef::Handler::Slack < Chef::Handler
     @api_key = @config[:api_key]
     @timeout = @config[:timeout]
     @fail_only = @config[:fail_only]
-    @send_start_message = @config[:send_start_message]
     @message_detail_level = @config[:message_detail_level]
     @cookbook_detail_level = @config[:cookbook_detail_level]
   end
@@ -73,33 +74,16 @@ class Chef::Handler::Slack < Chef::Handler
   end
 
   def report_chef_run_start
-    return false unless @send_start_message
-    slack_message(start_message(config).to_s, run_status.node.name)
+    return false unless @util.send_on_start
+    slack_message(@util.start_message.to_s, run_status.node.name)
   end
 
   def report_chef_run_end
     if run_status.success?
-      return false if @fail_only
-      slack_message("#{end_message(config)} \n #{run_status.exception}", run_status.node.name)
+      return false if @util.fail_only
+      slack_message("#{@util.end_message(run_status)} \n #{run_status.exception}", run_status.node.name)
     else
-      slack_message(end_message(config).to_s, run_status.node.name)
-    end
-  end
-
-  def start_message(context)
-    "Chef client run started on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}"
-  end
-
-  def end_message(context)
-    "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}#{run_status_message_detail(context['message_detail_level'])}"
-  end
-
-  def run_status_message_detail(message_detail_level)
-    case message_detail_level
-    when "elapsed"
-      " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
-    when "resources"
-      " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated\n#{updated_resources.join(', ')}" unless updated_resources.nil?
+      slack_message(@util.end_message(run_status).to_s, run_status.node.name)
     end
   end
 
@@ -108,17 +92,5 @@ class Chef::Handler::Slack < Chef::Handler
     @slackr_options[:username] = node_name unless @slackr_options[:username]
     slack = Slackr.connect(team, api_key, @slackr_options)
     slack.say(content)
-  end
-
-  def run_status_human_readable
-    run_status.success? ? "succeeded" : "failed"
-  end
-
-  def run_status_cookbook_detail(cookbook_detail_level)
-    case cookbook_detail_level
-    when "all"
-      cookbooks = Chef.run_context.cookbook_collection
-      " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
-    end
   end
 end

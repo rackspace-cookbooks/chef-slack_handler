@@ -32,6 +32,13 @@ else
   handler_source = "slack_handler_webhook.rb"
 end
 
+cookbook_file "#{node['chef_handler']['handler_path']}/slack_handler_util.rb" do
+  source 'slack_handler_util.rb'
+  mode "0600"
+  action :nothing
+  # end
+end.run_action(:create)
+
 cookbook_file handler_file do
   source handler_source
   mode "0600"

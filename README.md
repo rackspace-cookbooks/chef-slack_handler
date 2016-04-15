@@ -6,6 +6,8 @@ A cookbook for a `chef_handler` that sends reports and exceptions to Slack.  The
 1. Providing a team name and api_key (Uses the slackr gem)
 2. Providing a hash containing incoming webhook url(s)
 
+NOTE: If both methods are configured, webhooks will take precedence.
+
 This cookbook was originally a fork of [dcm-ops/chef-slack_handler](https://github.com/dcm-ops/chef-slack_handler) by [Dan Ryan](dan.ryan@enstratius.com). We have taken over maintenance of this cookbook and released it to Supermarket.
 
 # Requirements
@@ -35,6 +37,7 @@ This cookbook was originally a fork of [dcm-ops/chef-slack_handler](https://gith
 * `node['chef_client']['handler']['slack']['send_start_message']` - Send a message when the run starts, defaults to false
 * `node['chef_client']['handler']['slack']['message_detail_level']` - The level of detail in the message. Valid options are `basic`, `elapsed` and `resources`, defaults to `basic`
 * `node['chef_client']['handler']['slack']['cookbook_detail_level']` - The level of detail about the cookbook used in the message. Valid options are `off` and `all`, defaults to `off`
+* `node['chef_client']['handler']['slack']['send_environment']` - Send the `node.chef_environment`, defaults to false
 
 NOTE: If both `icon_url` and `icon_emoji` are set, `icon_url` will take precedence.
 
@@ -83,6 +86,8 @@ node['chef_client']['handler']['slack']['send_start_message'] = true
 node['chef_client']['handler']['slack']['message_detail_level'] = 'resources'
 # The level of detail about the cookbook used in the message. Valid options are 'off' and 'all', defaults to 'off'
 node['chef_client']['handler']['slack']['cookbook_detail_level'] = 'all'
+# Send the node.chef_environment, defaults to false
+node['chef_client']['handler']['slack']['send_environment'] = true
 ```
 
 NOTE: If both `icon_url` and `icon_emoji` are set, `icon_url` will take precedence.
@@ -95,6 +100,7 @@ node['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = t
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['send_start_message'] = true
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['message_detail_level'] = 'elapsed'
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['cookbook_detail_level'] = 'all'
+node['chef_client']['handler']['slack']['webhooks']['webhook1']['send_environment'] = true
 ```
 
 # Credits
