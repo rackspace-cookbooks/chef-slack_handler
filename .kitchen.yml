@@ -16,7 +16,11 @@ platforms:
   - name: ubuntu-12.04
   - name: ubuntu-14.04
 
+
 suites:
+  - name: default
+    run_list:
+      # Needed for Foodcritic RACK004
   - name: gem
     run_list:
       - recipe[slack_handler]
