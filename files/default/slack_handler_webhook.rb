@@ -20,12 +20,14 @@ require "chef"
 require "chef/handler"
 require 'net/http'
 require "timeout"
+require_relative 'slack_handler_util'
 
 class Chef::Handler::Slack < Chef::Handler
   attr_reader :webhooks, :username, :config, :timeout, :icon_emoji, :fail_only, :message_detail_level, :cookbook_detail_level
 
   def initialize(config = {})
     Chef::Log.debug('Initializing Chef::Handler::Slack')
+    @util = SlackHandlerUtil.new(config)
     @config = config
     @timeout = @config[:timeout]
     @icon_emoji = @config[:icon_emoji]
@@ -42,17 +44,11 @@ class Chef::Handler::Slack < Chef::Handler
       Chef::Log.debug("Sending handler report to webhook #{val}")
       webhook = node['chef_client']['handler']['slack']['webhooks'][val]
       Timeout.timeout(@timeout) do
-        sending_to_slack = false
-
-        if run_status.success?
-          unless fail_only(webhook)
-            slack_message(" :white_check_mark: #{message(webhook)}", webhook['url'])
-            sending_to_slack = true
-          end
-        else
-          sending_to_slack = true
-          slack_message(" :skull: #{message(webhook)}", webhook['url'], run_status.exception)
-        end
+        sending_to_slack = if run_status.is_a?(Chef::RunStatus)
+                             report_chef_run_end(webhook)
+                           else
+                             report_chef_run_start(webhook)
+                           end
         Chef::Log.info("Sending report to Slack webhook #{webhook['url']}") if sending_to_slack
       end
     end
@@ -62,22 +58,17 @@ class Chef::Handler::Slack < Chef::Handler
 
   private
 
-  def fail_only(webhook)
-    return webhook['fail_only'] unless webhook['fail_only'].nil?
-    @fail_only
+  def report_chef_run_start(webhook)
+    return false unless @util.send_on_start(webhook)
+    slack_message(" :gear: #{@util.start_message(webhook)}", webhook['url'])
   end
 
-  def message(context)
-    "Chef client run #{run_status_human_readable} on #{run_status.node.name}#{run_status_cookbook_detail(context['cookbook_detail_level'])}#{run_status_message_detail(context['message_detail_level'])}"
-  end
-
-  def run_status_message_detail(message_detail_level)
-    message_detail_level ||= @message_detail_level
-    case message_detail_level
-    when "elapsed"
-      " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
-    when "resources"
-      " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated \n #{updated_resources.join(', ')}" unless updated_resources.nil?
+  def report_chef_run_end(webhook)
+    if run_status.success?
+      return false if @util.fail_only(webhook)
+      slack_message(" :white_check_mark: #{@util.end_message(run_status, webhook)}", webhook['url'])
+    else
+      slack_message(" :skull: #{@util.end_message(run_status, webhook)}", webhook['url'], run_status.exception)
     end
   end
 
@@ -104,18 +95,5 @@ class Chef::Handler::Slack < Chef::Handler
     end
     body[:attachments] = [{ text: text_attachment }] unless text_attachment.nil?
     body.to_json
-  end
-
-  def run_status_human_readable
-    run_status.success? ? "succeeded" : "failed"
-  end
-
-  def run_status_cookbook_detail(cookbook_detail_level)
-    cookbook_detail_level ||= @cookbook_detail_level
-    case cookbook_detail_level
-    when "all"
-      cookbooks = Chef.run_context.cookbook_collection
-      " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
-    end
   end
 end

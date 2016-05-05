@@ -28,8 +28,10 @@ default_unless['chef_client']['handler']['slack']['webhooks']['name'] = []
 # default['chef_client']['handler']['slack']['webhooks']['name'].push('webhook1')
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['url'] = nil
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['fail_only'] = nil
+# default['chef_client']['handler']['slack']['webhooks']['webhook1']['send_start_message'] = nil
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['message_detail_level'] = nil
 # default['chef_client']['handler']['slack']['webhooks']['webhook1']['cookbook_detail_level'] = nil
+# default['chef_client']['handler']['slack']['webhooks']['webhook1']['send_environment'] = nil
 
 # shared attributes
 default['chef_client']['handler']['slack']['timeout']    = 15
@@ -43,3 +45,7 @@ default['chef_client']['handler']['slack']['message_detail_level'] = 'basic'
 default['chef_client']['handler']['slack']['cookbook_detail_level'] = 'off'
 # Only report failures
 default['chef_client']['handler']['slack']['fail_only'] = false
+# Whether to send a message to when the Chef run starts
+default['chef_client']['handler']['slack']['send_start_message'] = false
+# Whether to send a message the node.chef_environment as well as the node.name
+default['chef_client']['handler']['slack']['send_environment'] = false

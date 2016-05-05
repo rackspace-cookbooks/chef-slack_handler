@@ -24,13 +24,22 @@ handler_source = ''
 # if webhook attribute set, use webhook handler, otherwise use slackr gem handler
 if node['chef_client']['handler']['slack']['webhooks']['name'].empty?
   # use slackr to post message. slackr gem and apikey required
-  chef_gem "slackr"
+  chef_gem 'slackr' do
+    compile_time false if respond_to?(:compile_time)
+  end
   handler_file = "#{node['chef_handler']['handler_path']}/slack_handler.rb"
   handler_source = "slack_handler.rb"
 else
   handler_file = "#{node['chef_handler']['handler_path']}/slack_handler_webhook.rb"
   handler_source = "slack_handler_webhook.rb"
 end
+
+cookbook_file "#{node['chef_handler']['handler_path']}/slack_handler_util.rb" do
+  source 'slack_handler_util.rb'
+  mode "0600"
+  action :nothing
+  # end
+end.run_action(:create)
 
 cookbook_file handler_file do
   source handler_source
@@ -44,5 +53,16 @@ chef_handler "Chef::Handler::Slack" do
   arguments [
     node['chef_client']['handler']['slack']
   ]
+  supports start: true, report: true, exception: true
   action :nothing
 end.run_action(:enable)
+
+# Based on https://github.com/onddo/chef-handler-zookeeper
+ruby_block 'trigger_start_handlers' do
+  block do
+    require 'chef/run_status'
+    require 'chef/handler'
+    Chef::Handler.run_start_handlers(self)
+  end
+  action :nothing
+end.run_action(:create)
