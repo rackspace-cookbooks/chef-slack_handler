@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.7.1
+- Version 0.7.0 broke most of the `message_detail_level` settings, only `basic` worked. 0.7.1 fixes it.
+
 ## 0.7.0
 - Added `send_start_message` configuration which if set to `true` sends out a message when this cookbook is run. This is not quite the same as a [Chef start handler](https://docs.chef.io/handlers.html) but requires no additional setup to run. If you have other start handlers registered, they may run twice due if you turn this setting on. Default setting is `false`.
 - Added `send_environment` configuration which if set to `true` sends the node.chef_environment. Default setting is `false`.
