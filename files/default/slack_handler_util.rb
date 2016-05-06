@@ -10,7 +10,7 @@ class SlackHandlerUtil
 
   def end_message(run_status, context = {})
     "Chef run #{run_status_human_readable(run_status)} on #{node_details(context)}" \
-    "#{run_status_cookbook_detail(context)}#{run_status_message_detail(context)}"
+    "#{run_status_cookbook_detail(context)}#{run_status_message_detail(run_status, context)}"
   end
 
   def fail_only(context = {})
@@ -33,15 +33,15 @@ class SlackHandlerUtil
     run_status.success? ? 'succeeded' : 'failed'
   end
 
-  def node_details(context)
+  def node_details(context = {})
     "#{environment_details(context)}node #{node.name}"
   end
 
-  def environment_details(context)
+  def environment_details(context = {})
     return "env #{node.chef_environment}, " if context['send_environment'] || @default_config[:send_environment]
   end
 
-  def run_status_cookbook_detail(context)
+  def run_status_cookbook_detail(context = {})
     case context['cookbook_detail_level'] || @default_config[:cookbook_detail_level]
     when "all"
       cookbooks = Chef.run_context.cookbook_collection
@@ -49,7 +49,8 @@ class SlackHandlerUtil
     end
   end
 
-  def run_status_message_detail(context)
+  def run_status_message_detail(run_status, context = {})
+    updated_resources = run_status.updated_resources
     case context['message_detail_level'] || @default_config[:message_detail_level]
     when "elapsed"
       " (#{run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
