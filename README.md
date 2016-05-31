@@ -3,7 +3,8 @@
 # Description
 
 A cookbook for a `chef_handler` that sends reports and exceptions to Slack.  There are two options for use:
-1. Providing a team name and api_key (Uses the slackr gem)
+
+1. Providing a team name and api_key (Uses the [slackr gem](https://rubygems.org/gems/slackr))
 2. Providing a hash containing incoming webhook url(s)
 
 NOTE: If both methods are configured, webhooks will take precedence.
