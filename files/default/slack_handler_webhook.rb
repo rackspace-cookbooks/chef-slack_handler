@@ -80,7 +80,12 @@ class Chef::Handler::Slack < Chef::Handler
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     req = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
     req.body = request_body(message, text_attachment)
-    http.request(req)
+    res = http.request(req)
+    # responses can be:
+    # "Bad token"
+    # "invalid_payload"
+    # "ok"
+    raise res.body unless res.body == 'ok'
   end
 
   def request_body(message, text_attachment)
