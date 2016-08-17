@@ -39,6 +39,7 @@ This cookbook was originally a fork of [dcm-ops/chef-slack_handler](https://gith
 * `node['chef_client']['handler']['slack']['message_detail_level']` - The level of detail in the message. Valid options are `basic`, `elapsed` and `resources`, defaults to `basic`
 * `node['chef_client']['handler']['slack']['cookbook_detail_level']` - The level of detail about the cookbook used in the message. Valid options are `off` and `all`, defaults to `off`
 * `node['chef_client']['handler']['slack']['send_environment']` - Send the `node.chef_environment`, defaults to false
+* `node['chef_client']['handler']['slack']['send_organization']` - Send the `organization from /etc/chef/client.rb`, defaults to false
 
 NOTE: If both `icon_url` and `icon_emoji` are set, `icon_url` will take precedence.
 
@@ -89,6 +90,8 @@ node['chef_client']['handler']['slack']['message_detail_level'] = 'resources'
 node['chef_client']['handler']['slack']['cookbook_detail_level'] = 'all'
 # Send the node.chef_environment, defaults to false
 node['chef_client']['handler']['slack']['send_environment'] = true
+# Send the organization from /etc/chef/client.rb, defaults to false
+node['chef_client']['handler']['slack']['send_organization'] = true
 ```
 
 NOTE: If both `icon_url` and `icon_emoji` are set, `icon_url` will take precedence.
@@ -102,6 +105,7 @@ node['chef_client']['handler']['slack']['webhooks']['webhook1']['send_start_mess
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['message_detail_level'] = 'elapsed'
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['cookbook_detail_level'] = 'all'
 node['chef_client']['handler']['slack']['webhooks']['webhook1']['send_environment'] = true
+node['chef_client']['handler']['slack']['webhooks']['webhook1']['send_organization'] = true
 ```
 
 # Credits
