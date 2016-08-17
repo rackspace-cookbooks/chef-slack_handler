@@ -41,8 +41,8 @@ class SlackHandlerUtil
     return "env #{node.chef_environment}, " if context['send_environment'] || @default_config[:send_environment]
   end
 
-  def organization_details(context ={})
-    organization = File.file?('/etc/chef/client.rb') ? File.open('/etc/chef/client.rb').read.match(/(?<=\/organizations\/)(\w+-?\w+)/) : "Organization not found in client.rb"
+  def organization_details(context = {})
+    organization = File.file?('/etc/chef/client.rb') ? File.open('/etc/chef/client.rb').read.match(%r{(?<=\/organizations\/)(\w+-?\w+)}) : "Organization not found in client.rb"
     return "org #{organization}, " if context['send_organization'] || @default_config[:send_organization]
   end
 
