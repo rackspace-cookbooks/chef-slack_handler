@@ -33,7 +33,6 @@ class Chef::Handler::Slack < Chef::Handler
 
   def initialize(config = {})
     Chef::Log.debug('Initializing Chef::Handler::Slack')
-    @util = SlackHandlerUtil.new(config)
     @config = config
     setup_slackr_options(@config)
 
@@ -46,6 +45,7 @@ class Chef::Handler::Slack < Chef::Handler
   end
 
   def report
+    @util = SlackHandlerUtil.new(config, run_status)
     Timeout.timeout(@timeout) do
       sending_to_slack = if run_status.is_a?(Chef::RunStatus)
                            report_chef_run_end
@@ -81,9 +81,9 @@ class Chef::Handler::Slack < Chef::Handler
   def report_chef_run_end
     if run_status.success?
       return false if @util.fail_only
-      slack_message("#{@util.end_message(run_status)} \n #{run_status.exception}", run_status.node.name)
+      slack_message("#{@util.end_message} \n #{run_status.exception}", run_status.node.name)
     else
-      slack_message(@util.end_message(run_status).to_s, run_status.node.name)
+      slack_message(@util.end_message.to_s, run_status.node.name)
     end
   end
 
