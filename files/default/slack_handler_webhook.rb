@@ -38,13 +38,13 @@ class Chef::Handler::Slack < Chef::Handler
     @cookbook_detail_level = @config[:cookbook_detail_level]
   end
 
-  def set_run_status(run_status)
+  def setup_run_status(run_status)
     @run_status = run_status
     @util = SlackHandlerUtil.new(@config, @run_status)
   end
 
   def report
-    set_run_status(run_status)
+    setup_run_status(run_status)
 
     @webhooks['name'].each do |val|
       Chef::Log.debug("Sending handler report to webhook #{val}")

@@ -26,11 +26,11 @@ class SlackHandlerUtil
 
   private
 
-  def node()
+  def node
     @run_status.node
   end
 
-  def run_status_human_readable()
+  def run_status_human_readable
     @run_status.success? ? 'succeeded' : 'failed'
   end
 
