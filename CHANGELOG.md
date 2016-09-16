@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0
+- Check slack webhook result; move run status to property (#35)
+- Added send_organization configuration which provides the optional ability to include the organization in /etc/chef/client.rb to Slack.
+- webhook: check http response (#30)
+
 ## 0.7.1
 - Version 0.7.0 broke most of the `message_detail_level` settings, only `basic` worked. 0.7.1 fixes it.
 
