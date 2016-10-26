@@ -105,9 +105,7 @@ class Chef::Handler::Slack < Chef::Handler
     elsif @icon_emoji
       body[:icon_emoji] = @icon_emoji
     end
-    if @channel
-      body[:channel] = @channel
-    end
+    body[:channel] = @channel if @channel
     body[:attachments] = [{ text: text_attachment }] unless text_attachment.nil?
     body.to_json
   end
