@@ -31,6 +31,7 @@ class Chef::Handler::Slack < Chef::Handler
     @timeout = @config[:timeout]
     @icon_emoji = @config[:icon_emoji]
     @icon_url = @config[:icon_url]
+    @channel = @config[:channel]
     @username = @config[:username]
     @webhooks = @config[:webhooks]
     @fail_only = @config[:fail_only]
@@ -103,6 +104,9 @@ class Chef::Handler::Slack < Chef::Handler
       body[:icon_url] = @icon_url
     elsif @icon_emoji
       body[:icon_emoji] = @icon_emoji
+    end
+    if @channel
+      body[:channel] = @channel
     end
     body[:attachments] = [{ text: text_attachment }] unless text_attachment.nil?
     body.to_json
