@@ -7,11 +7,6 @@ require 'json'
 
 Dir['./test/unit/spec/support/**/*.rb'].sort.each { |f| require f }
 
-::LOG_LEVEL = :fatal
-::CHEFSPEC_OPTS = {
-  log_level: ::LOG_LEVEL
-}.freeze
-
 # use node.default to put stub data for every node in every test
 # could also use this method to stub other node-related things like environment
 def node_resources(node)
