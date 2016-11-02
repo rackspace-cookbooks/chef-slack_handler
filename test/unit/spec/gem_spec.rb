@@ -12,8 +12,8 @@ describe 'slack_handler::default' do
             node_resources(node) # data for this node
             stub_chef_zero(platform, version, server) # stub other nodes in chef-zero
 
-            node.set['chef_client']['handler']['slack']['team'] = 'foo'
-            node.set['chef_client']['handler']['slack']['api_key'] = 'bar'
+            node.default['chef_client']['handler']['slack']['team'] = 'foo'
+            node.default['chef_client']['handler']['slack']['api_key'] = 'bar'
           end.converge(described_recipe)
         end
 
