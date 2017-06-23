@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.1
+
+- Pins chef_handler version (#46)
+- Fix reporting exceptions with libyajl2 (#42)
+- Testing Cleanup (#40)
+- Add channel as channel can be overridden with a webhook (#39)
+
 ## 0.8.0
 - Check slack webhook result; move run status to property (#35)
 - Added send_organization configuration which provides the optional ability to include the organization in /etc/chef/client.rb to Slack.
