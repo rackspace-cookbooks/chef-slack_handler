@@ -8,8 +8,8 @@ end
 
 group :unit do
   gem 'berkshelf', '~> 4.0'
-  gem 'chefspec'
   gem 'chef', '~> 12.5.1'
+  gem 'chefspec'
 end
 
 group :kitchen_common do
@@ -27,9 +27,9 @@ end
 
 group :development do
   gem 'growl'
-  gem 'rb-fsevent'
   gem 'guard'
-  gem 'guard-kitchen'
   gem 'guard-foodcritic'
+  gem 'guard-kitchen'
   gem 'guard-rubocop'
+  gem 'rb-fsevent'
 end
