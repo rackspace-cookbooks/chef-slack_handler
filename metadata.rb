@@ -12,7 +12,7 @@ depends 'chef_handler', '~> 2.1.2'
 supports 'ubuntu'
 supports 'centos'
 supports 'fedora'
-supports 'rhel'
+supports 'redhat'
 supports 'debian'
 
 source_url 'https://github.com/rackspace-cookbooks/chef-slack_handler' if respond_to?(:source_url)
