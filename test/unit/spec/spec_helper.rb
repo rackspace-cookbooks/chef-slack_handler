@@ -1,4 +1,5 @@
 # Encoding: utf-8
+
 require 'rspec/expectations'
 require 'chefspec'
 require 'chefspec/berkshelf'
@@ -19,8 +20,7 @@ end
 
 # use to stub commands or files or other ruby calls
 # e.g. stub_command('/usr/sbin/httpd -t').and_return(0)
-def stub_resources
-end
+def stub_resources; end
 
 def stub_chef_zero(platform, version, server)
   Dir['./test/fixtures/nodes/*.json'].sort.each do |f|
