@@ -16,6 +16,14 @@
 # limitations under the License.
 #
 
+# Disable Slack handler in why-run mode
+# See also: https://github.com/rackspace-cookbooks/chef-slack_handler/issues/48
+# Inspired by https://github.com/DataDog/chef-datadog/pull/231/files
+if Chef::Config[:why_run]
+  Chef::Log.warn('Running in why-run mode, skipping slack_handler')
+  return
+end
+
 include_recipe "chef_handler"
 
 handler_file = ''
