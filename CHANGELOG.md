@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1
+
+- Fix for syntax issue (#54)
+
 ## 0.9.0
 
 - check Chef for run_context compatibility (#52)
