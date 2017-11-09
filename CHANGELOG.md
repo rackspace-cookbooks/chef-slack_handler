@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0
+
+- check Chef for run_context compatibility (#52)
+- Disable Slack handler in why-run mode (#49)
+- Fix a few of the additional lint complaints (#47)
+
 ## 0.8.1
 
 - Pins chef_handler version (#46)
