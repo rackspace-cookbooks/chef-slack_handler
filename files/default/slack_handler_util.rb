@@ -50,10 +50,11 @@ class SlackHandlerUtil
   def run_status_cookbook_detail(context = {})
     case context['cookbook_detail_level'] || @default_config[:cookbook_detail_level]
     when "all"
-      if Chef.respond_to?(:run_context)
-        cookbooks = Chef.run_context.cookbook_collection
-      else
-        cookbooks = run_context.cookbook_collection
+      cookbooks = if Chef.respond_to?(:run_context)
+                    Chef.run_context.cookbook_collection
+                  else
+                    run_context.cookbook_collection
+                  end
       " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
     end
   end
