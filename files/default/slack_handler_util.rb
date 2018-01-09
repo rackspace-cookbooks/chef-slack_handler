@@ -61,11 +61,12 @@ class SlackHandlerUtil
 
   def run_status_message_detail(context = {})
     updated_resources = @run_status.updated_resources
+    elapsed_time = @run_status.elapsed_time.round
     case context['message_detail_level'] || @default_config[:message_detail_level]
     when "elapsed"
-      " (#{@run_status.elapsed_time.round} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
+      ". #{updated_resources.count} resources updated in #{elapsed_time} seconds." unless updated_resources.nil?
     when "resources"
-      " (#{@run_status.elapsed_time.round} seconds). #{updated_resources.count} resources updated \n #{updated_resources.join(', ')}" unless updated_resources.nil?
+      ". #{updated_resources.count} resources updated in #{elapsed_time} seconds:\n#{updated_resources.join(', ')}" unless updated_resources.nil?
     end
   end
 end
