@@ -16,6 +16,12 @@
 # limitations under the License.
 #
 
+directory node['chef_handler']['handler_path'] do
+  action :create
+  user "root"
+  group "root"
+end.run_action(:create)
+
 include_recipe "chef_handler"
 
 handler_file = ''
