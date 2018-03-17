@@ -47,16 +47,16 @@ class Chef::Handler::Slack < Chef::Handler
   def report
     setup_run_status(run_status)
 
-    @webhooks['name'].each do |val|
+    @webhooks[:name].each do |val|
       Chef::Log.debug("Sending handler report to webhook #{val}")
-      webhook = node['chef_client']['handler']['slack']['webhooks'][val]
+      webhook = node[:chef_client][:handler][:slack][:webhooks][val]
       Timeout.timeout(@timeout) do
         sending_to_slack = if @run_status.is_a?(Chef::RunStatus)
                              report_chef_run_end(webhook)
                            else
                              report_chef_run_start(webhook)
                            end
-        Chef::Log.info("Sending report to Slack webhook #{webhook['url']}") if sending_to_slack
+        Chef::Log.info("Sending report to Slack webhook #{webhook[:url]}") if sending_to_slack
       end
     end
   rescue Exception => e
@@ -67,15 +67,15 @@ class Chef::Handler::Slack < Chef::Handler
 
   def report_chef_run_start(webhook)
     return false unless @util.send_on_start(webhook)
-    slack_message(" :gear: #{@util.start_message(webhook)}", webhook['url'])
+    slack_message(" :gear: #{@util.start_message(webhook)}", webhook[:url])
   end
 
   def report_chef_run_end(webhook)
     if @run_status.success?
       return false if @util.fail_only(webhook)
-      slack_message(" :white_check_mark: #{@util.end_message(webhook)}", webhook['url'])
+      slack_message(" :white_check_mark: #{@util.end_message(webhook)}", webhook[:url])
     else
-      slack_message(" :skull: #{@util.end_message(webhook)}", webhook['url'], run_status.exception)
+      slack_message(" :skull: #{@util.end_message(webhook)}", webhook[:url], run_status.exception)
     end
   end
 
