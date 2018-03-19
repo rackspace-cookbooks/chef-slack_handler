@@ -49,7 +49,7 @@ class Chef::Handler::Slack < Chef::Handler
 
     @webhooks[:name].each do |val|
       Chef::Log.debug("Sending handler report to webhook #{val}")
-      webhook = node[:chef_client][:handler][:slack][:webhooks][val]
+      webhook = @webhooks[val.intern]
       Timeout.timeout(@timeout) do
         sending_to_slack = if @run_status.is_a?(Chef::RunStatus)
                              report_chef_run_end(webhook)
