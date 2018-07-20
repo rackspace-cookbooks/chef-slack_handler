@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+- Add support for windows and chef-client 14+
+
 ## 0.9.1
 
 - Fix for syntax issue (#54)
