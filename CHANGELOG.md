@@ -4,6 +4,10 @@
 
 - Add support for windows and chef-client 14+
 
+## 0.9.2
+
+- Allow each webhook to override it's own channel (#3)
+
 ## 0.9.1
 
 - Fix for syntax issue (#54)
