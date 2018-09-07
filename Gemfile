@@ -7,7 +7,7 @@ end
 
 group :unit do
   gem 'berkshelf', '~> 4.0'
-  gem 'chef', '~> 12.5.1'
+  gem 'chef', '~> 14'
   gem 'chefspec'
 end
 

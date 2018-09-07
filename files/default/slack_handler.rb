@@ -33,7 +33,7 @@ class Chef::Handler::Slack < Chef::Handler
 
   def initialize(config = {})
     Chef::Log.debug('Initializing Chef::Handler::Slack')
-    @util = SlackHandlerUtil.new(config)
+    @util = SlackHandlerUtil.new(config, run_status)
     @config = config
     setup_slackr_options(@config)
 

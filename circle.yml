@@ -7,7 +7,7 @@ dependencies:
 
 machine:
   ruby:
-    version: 2.3.1
+    version: 2.5.1
 test:
   override:
     - bundle exec rake style

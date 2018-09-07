@@ -24,9 +24,6 @@ if Chef::Config[:why_run]
   return
 end
 
-handler_file = ''
-handler_source = ''
-
 # if webhook attribute set, use webhook handler, otherwise use slackr gem handler
 if node['chef_client']['handler']['slack']['webhooks']['name'].empty?
   # use slackr to post message. slackr gem and apikey required
