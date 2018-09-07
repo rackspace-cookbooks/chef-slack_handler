@@ -33,14 +33,14 @@ if node['chef_client']['handler']['slack']['webhooks']['name'].empty?
   chef_gem 'slackr' do
     compile_time false if respond_to?(:compile_time)
   end
-  handler_file = "#{node['chef_handler']['handler_path']}/slack_handler.rb"
+  handler_file = "#{Chef::Config[:file_cache_path]}/slack_handler.rb"
   handler_source = "slack_handler.rb"
 else
-  handler_file = "#{node['chef_handler']['handler_path']}/slack_handler_webhook.rb"
+  handler_file = "#{Chef::Config[:file_cache_path]}/slack_handler_webhook.rb"
   handler_source = "slack_handler_webhook.rb"
 end
 
-cookbook_file "#{node['chef_handler']['handler_path']}/slack_handler_util.rb" do
+cookbook_file "#{Chef::Config[:file_cache_path]}/slack_handler_util.rb" do
   source 'slack_handler_util.rb'
   mode "0600"
   action :nothing
