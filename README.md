@@ -9,11 +9,12 @@ A cookbook for a `chef_handler` that sends reports and exceptions to Slack.  The
 
 NOTE: If both methods are configured, webhooks will take precedence.
 
+* v1.0.0 of this cookbook requires chef-client 14+, users of older chef clients should pin to previous version ~>0.9.2
+
 This cookbook was originally a fork of [dcm-ops/chef-slack_handler](https://github.com/dcm-ops/chef-slack_handler) by [Dan Ryan](dan.ryan@enstratius.com). We have taken over maintenance of this cookbook and released it to Supermarket.
 
 # Requirements
 
-* The `chef_handler` cookbook
 * An existing Slack incoming webhook(s)
 
 # Usage 1
