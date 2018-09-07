@@ -31,7 +31,6 @@ class Chef::Handler::Slack < Chef::Handler
     @timeout = @config[:timeout]
     @icon_emoji = @config[:icon_emoji]
     @icon_url = @config[:icon_url]
-    @channel = @config[:channel]
     @username = @config[:username]
     @webhooks = @config[:webhooks]
     @fail_only = @config[:fail_only]
@@ -67,26 +66,28 @@ class Chef::Handler::Slack < Chef::Handler
 
   def report_chef_run_start(webhook)
     return false unless @util.send_on_start(webhook)
-    slack_message(" :gear: #{@util.start_message(webhook)}", webhook[:url])
+    slack_message(" :gear: #{@util.start_message(webhook)}", webhook['url'], webhook['channel'])
   end
 
   def report_chef_run_end(webhook)
     if @run_status.success?
       return false if @util.fail_only(webhook)
-      slack_message(" :white_check_mark: #{@util.end_message(webhook)}", webhook[:url])
+      slack_message(" :white_check_mark: #{@util.end_message(webhook)}", webhook['url'], webhook['channel'])
     else
-      slack_message(" :skull: #{@util.end_message(webhook)}", webhook[:url], run_status.exception)
+      slack_message(" :skull: #{@util.end_message(webhook)}", webhook['url'], webhook['channel'], run_status.exception)
     end
   end
 
-  def slack_message(message, webhook, text_attachment = nil)
+  def slack_message(message, webhook, channel, text_attachment = nil)
     Chef::Log.debug("Sending slack message #{message} to webhook #{webhook} #{text_attachment ? 'with' : 'without'} a text attachment")
     uri = URI.parse(webhook)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     req = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
-    req.body = request_body(message, text_attachment)
+    req.body = request_body(message, channel, text_attachment)
+    puts "=========================================================="
+    puts req.body
     res = http.request(req)
     # responses can be:
     # "Bad token"
@@ -95,7 +96,7 @@ class Chef::Handler::Slack < Chef::Handler
     raise res.body unless res.body == 'ok'
   end
 
-  def request_body(message, text_attachment)
+  def request_body(message, channel, text_attachment)
     body = {}
     body[:username] = @username unless @username.nil?
     body[:text] = message
@@ -105,7 +106,7 @@ class Chef::Handler::Slack < Chef::Handler
     elsif @icon_emoji
       body[:icon_emoji] = @icon_emoji
     end
-    body[:channel] = @channel if @channel
+    body[:channel] = channel if channel
     body[:attachments] = [{ text: text_attachment.to_s }] unless text_attachment.nil?
     body.to_json
   end
