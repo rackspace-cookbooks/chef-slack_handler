@@ -24,16 +24,6 @@ if Chef::Config[:why_run]
   return
 end
 
-directory node['chef_handler']['handler_path'] do
-  action :create
-  user "root"
-  group "root"
-end.run_action(:create)
-
-include_recipe "chef_handler"
-
-handler_file = ''
-handler_source = ''
 
 # if webhook attribute set, use webhook handler, otherwise use slackr gem handler
 if node['chef_client']['handler']['slack']['webhooks']['name'].empty?
