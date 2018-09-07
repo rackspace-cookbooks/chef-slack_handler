@@ -50,18 +50,23 @@ class SlackHandlerUtil
   def run_status_cookbook_detail(context = {})
     case context['cookbook_detail_level'] || @default_config[:cookbook_detail_level]
     when "all"
-      cookbooks = run_context.cookbook_collection
+      cookbooks = if Chef.respond_to?(:run_context)
+                    Chef.run_context.cookbook_collection
+                  else
+                    run_context.cookbook_collection
+                  end
       " using cookbooks #{cookbooks.values.map { |x| x.name.to_s + ' ' + x.version }}"
     end
   end
 
   def run_status_message_detail(context = {})
     updated_resources = @run_status.updated_resources
+    elapsed_time = @run_status.elapsed_time.round
     case context['message_detail_level'] || @default_config[:message_detail_level]
     when "elapsed"
-      " (#{@run_status.elapsed_time} seconds). #{updated_resources.count} resources updated" unless updated_resources.nil?
+      ". #{updated_resources.count} resources updated in #{elapsed_time} seconds." unless updated_resources.nil?
     when "resources"
-      " (#{@run_status.elapsed_time} seconds). #{updated_resources.count} resources updated \n #{updated_resources.join(', ')}" unless updated_resources.nil?
+      ". #{updated_resources.count} resources updated in #{elapsed_time} seconds:\n#{updated_resources.join(', ')}" unless updated_resources.nil?
     end
   end
 end

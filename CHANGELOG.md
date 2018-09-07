@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.9.1
+
+- Fix for syntax issue (#54)
+
+## 0.9.0
+
+- check Chef for run_context compatibility (#52)
+- Disable Slack handler in why-run mode (#49)
+- Fix a few of the additional lint complaints (#47)
+
+## 0.8.1
+
+- Pins chef_handler version (#46)
+- Fix reporting exceptions with libyajl2 (#42)
+- Testing Cleanup (#40)
+- Add channel as channel can be overridden with a webhook (#39)
+
 ## 0.8.0
 - Check slack webhook result; move run status to property (#35)
 - Added send_organization configuration which provides the optional ability to include the organization in /etc/chef/client.rb to Slack.
