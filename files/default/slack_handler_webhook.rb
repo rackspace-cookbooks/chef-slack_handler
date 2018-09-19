@@ -86,8 +86,7 @@ class Chef::Handler::Slack < Chef::Handler
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     req = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
     req.body = request_body(message, channel, text_attachment)
-    puts "=========================================================="
-    puts req.body
+    Chef::Log.debug Chef::JSONCompat.to_json_pretty(req.body)
     res = http.request(req)
     # responses can be:
     # "Bad token"
